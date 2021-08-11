@@ -2,49 +2,49 @@
 
 namespace HexMakina\Diph;
 
-class Diff
+class Diph
 {
 
-  public static function diff_int($original, $compare) : bool
+  public static function diph_int($original, $compare) : bool
   {
     return intval($original) !== intval($compare);
   }
 
-  public static function diff_string($original, $compare) : bool
+  public static function diph_string($original, $compare) : bool
   {
     return strcasecmp(trim("$original"), trim("$compare")) !== 0;
   }
-  
-  public static function diff_array_of_strings($original, $compare) : array
-  {
-    $diff = array_merge($compare, $original);
-    sort($diff);
 
-		foreach($diff as $i => $value)
+  public static function diph_array_of_strings($original, $compare) : array
+  {
+    $diph = array_merge($compare, $original);
+    sort($diph);
+
+		foreach($diph as $i => $value)
     {
 			foreach($original as $io => $o_value)
       {
-				if(self::diff_string($o_value, $value) === false)
+				if(self::diph_string($o_value, $value) === false)
         {
-          unset($diff[$i]);
+          unset($diph[$i]);
           continue;
         }
       }
     }
-    
-    return $diff;
+
+    return $diph;
   }
-  
-  // public static function diff_array_of_object($original, $compare, $interface='HexMakina\qivive\qiviveInterfaco') : array
-  public static function diff_array_of_object($original, $compare, $interface) : array
+
+  // public static function diph_array_of_object($original, $compare, $interface='HexMakina\qivive\qiviveInterfaco') : array
+  public static function diph_array_of_object($original, $compare) : array
   {
-    if(empty($compare)) 
+    if(empty($compare))
       return $original;
 
     if(empty($original))
     {
       foreach($compare as $o)
-        $o->has_diff(true); // all new
+        $o->has_diph(true); // all new objects
       return $compare;
     }
 
@@ -60,57 +60,57 @@ class Diff
         if($comparable_found === false && $o->comparable($c))
         {
           $comparable_found = true;
-          $ret[$i] = $o->diff($c);
+          $ret[$i] = $o->diph($c);
         }
       }
       //nothing found to compare, must be new element, flag it and pack it.
       if($comparable_found === false)
       {
-        $c->has_diff(true);
+        $c->has_diph(true);
         $ret[$i]= $c;
       }
     }
     return $ret;
   }
-  
-  // return assoc with all keys from original and compare AND object cloned and flagged with has_diff() method
-  public static function diff_assoc_of_objects($original, $compare) : array
+
+  // return assoc with all keys from original and compare AND object cloned and flagged with has_diph() method
+  public static function diph_assoc_of_objects($original, $compare) : array
   {
-    $ret = []; 
+    $ret = [];
 
     $all_keys = array_unique(array_merge(array_keys($original), array_keys($compare)));
 
     foreach($all_keys as $key)
     {
       $ret[$key] = null; // OCD setting key
-      
+
       if(!isset($original[$key])) // new object in compare
       {
         $clone = clone $compare[$key];
-        $clone->has_diff(true);
+        $clone->has_diph(true);
         $ret[$key] = $clone;
       }
       elseif(!isset($compare[$key])) // object only in original
       {
         $ret[$key] = clone $original[$key];
       }
-      else // object is present in both array, use class::diff
+      else // object is present in both array, use class::diph
       {
-        $ret[$key] = $original[$key]->diff($compare[$key]);
+        $ret[$key] = $original[$key]->diph($compare[$key]);
       }
     }
-    
+
     return $ret;
   }
-  
-  public static function diff_assoc_of_array_of_objects($original, $compare) : array
+
+  public static function diph_assoc_of_array_of_objects($original, $compare) : array
   {
     $ret = [];
     $all_keys = array_unique(array_merge(array_keys($original),array_keys($compare)));
     foreach($all_keys as $section)
     {
       $ret[$section] = null;
-  
+
       if(empty($original[$section]))
       {
         $ret[$section] = $compare[$section] ?? [];
@@ -121,11 +121,12 @@ class Diff
       }
       else
       {
-        $ret[$section] = self::diff_array_of_object($original[$section], $compare[$section]);
+        $obj
+        $ret[$section] = self::diph_array_of_object($original[$section], $compare[$section], $interface);
       }
     }
 
     return $ret;
   }
-  
+
 }
