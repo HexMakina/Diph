@@ -121,7 +121,6 @@ class Diph
       }
       else
       {
-        $obj
         $ret[$section] = self::diph_array_of_object($original[$section], $compare[$section], $interface);
       }
     }
