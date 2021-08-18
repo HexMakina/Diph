@@ -1,0 +1,22 @@
+{
+    "name": "hexmakina/diph",
+    "description": "Diph is php diff library",
+    "type": "package",
+    "require": {
+        "php": ">=7.0"
+    },
+    "license": "mit",
+    "authors": [
+        {
+            "name": "HexMakina",
+            "email": "touch@hexmakina.be",
+            "homepage": "https://hexmakina.be"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "HexMakina\\Diph\\": "/"
+        }
+    }
+}
